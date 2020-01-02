@@ -14,11 +14,13 @@ Depends:
     tidyr,
     tidyselect,
     ggplot2,
-    rlang
+    rlang,
+    scales
 Suggests: 
     testthat (>= 2.1.0)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Collate: 
     'get_door_prob_CI.R'
     'get_door_summary.R'
     'get_door_probability.R'
+    'plot_DOOR_comparison.R'

@@ -17,18 +17,21 @@
 #' res <- get_door_summary(data, "seq", "DOOR")
 #'
 #' @importFrom magrittr %>%
-#' @importFrom tidyr pivot_wider
+#' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom dplyr group_by summarise arrange enquo
+#' @import ggplot2
+#' @importFrom scales percent_format
 #'
 #' @export
 plot_door_comparison <- function(res){
   tx <- names(res)[-1]
+  DOOR <- names(res)[1]
 
   res %>% pivot_longer(!!enquo(tx)) %>%
     group_by(name) %>%
     mutate(perc = value/ sum(value)) %>%
     ungroup() %>%
-    ggplot(aes(name, perc, fill = factor(DOOR))) +
+    ggplot(aes(name, perc, fill = factor(!!enquo(DOOR)))) +
     geom_bar(position="fill", stat="identity") +
     geom_text(aes(label=ifelse(perc >= 0.07, paste0(sprintf("%.0f", perc*100),"%"),"")),
               position=position_stack(vjust=0.5), colour="white") +
