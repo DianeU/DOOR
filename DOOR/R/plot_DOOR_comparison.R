@@ -31,7 +31,7 @@ plot_door_comparison <- function(res){
     group_by(name) %>%
     mutate(perc = value/ sum(value)) %>%
     ungroup() %>%
-    ggplot(aes(name, perc, fill = factor(!!enquo(DOOR)))) +
+    ggplot(aes(name, perc, fill = factor(DOOR))) +
     geom_bar(position="fill", stat="identity") +
     geom_text(aes(label=ifelse(perc >= 0.07, paste0(sprintf("%.0f", perc*100),"%"),"")),
               position=position_stack(vjust=0.5), colour="white") +
