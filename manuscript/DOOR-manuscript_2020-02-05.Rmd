@@ -1,0 +1,25 @@
+---
+title: "Desirability of Outcome Ranking"
+author: Michelle Earley, Weixiao Dai, Qing Pan, Toshi Hamasaki, Scott Evans, Diane
+  Uschner
+date: "February 5, 2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+# Methods
+
+## The DOOR probability
+
+## DOOR Conference Interval
+
+### Asymptotic Formula
+
+### Bootstrap
+
+## 
