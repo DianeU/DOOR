@@ -4,8 +4,7 @@
 \alias{get_door_prob_CI}
 \title{Calculate confidence interval for the DOOR probability}
 \usage{
-get_door_prob_CI(res, tx, alpha = 0.05, method = "bootstrap",
-  B = 100)
+get_door_prob_CI(res, tx, alpha = 0.05, method = "bootstrap", B = 100)
 }
 \arguments{
 \item{res}{summary table of the sample size by treatment and door outcome, result of get_door_summary. Treatment in columns, DOOR outcomes in rows.}
