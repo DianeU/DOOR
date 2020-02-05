@@ -13,13 +13,33 @@ knitr::opts_chunk$set(echo = TRUE)
 # Introduction
 
 # Methods
+Consider the situation of a study with $n$ participants, 
+treatment groups $A$ and $B$, and an ordinal outcome with $K$ levels. The 
+situation is presented in the table.
 
-## The DOOR probability
+\begin{table}
+\begin{tabular}
+ADD DOOR SUMMARY HERE.
+\end{tabular}
+\end{table}
 
-## DOOR Conference Interval
+## Point estimates 
 
-### Asymptotic Formula
+### The DOOR probability
 
-### Bootstrap
+### Difference in means
 
-## 
+### Partial Score
+
+
+## Conference Intervals
+
+### Bootstrap CI for the DOOR probability
+
+### Wilcoxon rank sum method
+
+### Asymptotic Formula for the DOOR CI
+
+
+
+
