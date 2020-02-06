@@ -3,7 +3,12 @@ title: "Desirability of Outcome Ranking"
 author: Michelle Earley, Weixiao Dai, Qing Pan, Toshi Hamasaki, Scott Evans, Diane
   Uschner
 date: "February 5, 2020"
-output: pdf_document
+documentclass: jss
+classoption: article
+output: 
+  pdf_document:
+    includes:
+      in_header: header.tex
 ---
 
 ```{r setup, include=FALSE}
@@ -13,19 +18,65 @@ knitr::opts_chunk$set(echo = TRUE)
 # Introduction
 
 # Methods
-Consider the situation of a study with $n$ participants, 
-treatment groups $A$ and $B$, and an ordinal outcome with $K$ levels. The 
-situation is presented in the table.
+Consider the situation of a study with treatment groups $A$ and $B$, and DOOR outcome $Y$ with $K$ levels. 
+Let the total sample size be denoted by $n$, where $n = n_A + n_B$ and $n_t$ denotes
+the sample size in group $t \in \{A, B\}$. Let $n_{t,k}$ denote number of subjects in group $t$ that experienced outcome $Y = k$.
+The situation is presented in Table \ref{tab:door-summary}.
 
-\begin{table}
-\begin{tabular}
-ADD DOOR SUMMARY HERE.
+\begin{table}[ht]
+\centering
+\begin{tabular}{ccc}
+\toprule
+Outcome & \multicolumn{2}{c}{Treamtent Group} \\
+$Y = k$ & $A$ & $B$\\
+\midrule
+1 & $n_{A,1}$ & $n_{B,1}$\\
+2 & $n_{A,2}$ & $n_{B,2}$\\
+\vdots & \vdots & \vdots \\
+$K$ & $n_{A,K}$ & $n_{B,K}$\\
+\midrule
+Total & $n_A$ & $n_B$\\
+\bottomrule
 \end{tabular}
+\caption{DOOR summary table of sample sizes by DOOR outcome and treatment group.}
+\label{tab:door-summary}
 \end{table}
+
+Denote the vector of sample sizes in group $t \in \{A, B\}$ by outcome as $v_t = (n_{t,1}, \dots, n_{t,K})^T$.
 
 ## Point estimates 
 
 ### The DOOR probability
+
+The DOOR probability is defined as the probability $p = P(Y_A \geq Y_B)$ that a randomly selected participant
+in group $A$ experiences a better outcome than a randomly selected participant in group $B$. The DOOR probability
+$p$ can be estimated by the fractions of tuples $(Y_{A,i}, Y_{B,j})$, where $Y_{A,i} \geq Y_{B,j}$, namely
+
+\begin{equation}
+\hat{p} = \sum_{i = 1}^{n_A}\sum_{j = 1}^{n_B} \frac{1(Y_{A,i} \geq Y_{B,j})}{n_A\cdot n_B}.
+\end{equation}
+
+We can use the DOOR summary in table \ref{tab:door-summary} to calculate this estimate more efficiently. We recognize 
+that for each participant in group $B$ that had outcome $Y = k$, there are $n_{A,k}$ participants in group $A$ that had 
+the same outcome, and $\sum_{j = k+1}^K n_{A, j}$ participants that had a larger outcome. Denote by $M$ the symmetric matrix
+that contains the shifted sample size vector $v_A$ of group $A$ in rows and columns:
+
+\begin{equation}
+M = 
+\begin{pmatrix}
+n_{A,2} & n_{A,3} & \dots & n_{A,K} & 0\\
+n_{A,3} & n_{A,4} & \dots & 0 & 0\\
+\vdots & \vdots  & \dots & \vdots  & \vdots \\
+n_{A,K} & 0  & \dots & 0 & 0\\
+0  & 0 & \dots & 0 & 0\\
+\end{pmatrix}
+\end{equation}.
+
+We can then estimate the DOOR probability by taking the matrix product of $M$ and $v_B$ for the probability of observing a larger outcome in group $A$ than in $B$, and adding half the scalar product of $v_A$ and $v_B$ for the probability of observing the same outcome in both groups, and dividing by the total number of possible comparisons $n_A\cdot n_B$ 
+
+\begin{equation}
+\hat{p} = \frac{1}{n_A \cdot n_B}\cdot(1^{T} M v_B + \frac{1}{2} v_A^{T} v_B.)
+\end{equation}
 
 ### Difference in means
 
@@ -33,13 +84,34 @@ ADD DOOR SUMMARY HERE.
 
 
 ## Conference Intervals
-
+  
 ### Bootstrap CI for the DOOR probability
 
 ### Wilcoxon rank sum method
 
 ### Asymptotic Formula for the DOOR CI
 
+## Implementation
+
+We created an \proglang{R} package for the DOOR probability. The fpllowing code generates Table \ref{tab:door-summary} for an example of
+$n = 300$ participants
+
+```{r message = FALSE}
+library(DOOR)
+
+set.seed(123)
+n <- 300
+seq <- rep(c("A", "B"), each = n/2)
+DOOR <- sample(1:4, size = n, replace = TRUE)
+data <- data.frame(seq, DOOR)
+(res <- get_door_summary(data, "seq", "DOOR"))
+```
+
+The following command creates Figure \ref{fig:door-comparison} that visualizes Table \ref{tab:door-summary}.
+
+```{r, fig.cap="\\label{fig:door-comparison}Visualization of the DOOR summary"}
+plot_door_comparison(res)
+```
 
 
 
