@@ -29,10 +29,10 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
               {
                 x <- res$DOOR
                 N <- apply(res[-1], 2, sum)
-                p <- apply(res[-1], 2, function(x) x/ N)
+                p <- apply(res[-1], 2, function(n) n/ N)
                 data <- data.frame(
                   seq = rep(tx, times = N),
-                  DOOR = as.vector(sapply(tx, function(tx) sample(x, size = N[tx], replace = TRUE, prob = p[,tx])))
+                  DOOR = as.vector(sapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p[,txi])))
                   )
                 res <- get_door_summary(data, "seq", "DOOR")
                 get_door_probability(res)
