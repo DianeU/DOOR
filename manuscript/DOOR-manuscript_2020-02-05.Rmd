@@ -153,8 +153,54 @@ data <- data.frame(seq, DOOR)
 The following command creates Figure \ref{fig:door-comparison} that visualizes Table \ref{tab:door-summary}.
 
 ```{r, fig.cap="\\label{fig:door-comparison}Visualization of the DOOR summary"}
-plot_door_comparison(res)
+get_door_comparison(res)
 ```
+
+
+\newpage
+
+\appendix
+
+# Variance and Power calculation for DOOR Probability outcome
+
+
+Assume that the ordinal DOOR outcomes in the control group follows the multinomial distribution with $pr_c=(pr_{c,1},\dots, pr_{c,p}$) where $pr_c$ is the vector of probabilities falling into $p$ DOOR outcome categories and $pr_{c,i}$ is the probability falling into the ith category. Similarly, in the treatment group, the DOOR outcomes follows a multinomial distribution with $pr_t=(pr_{t,1},\dots, pr_{t,p})$. 
+
+The sample size in the control group is $m_c\cdot k_c$ where $m_c$ is the average number of patients in a hospital and $k_c$ is the number of hospitals in the control group. The corresponding numbers are $m_c\cdot k_c$ in the treatment group. Assuming an intra-cluster correlation $ICC$, the design effect are $DE_c = 1+(m_c-1)\cdot ICC$ and $DE_t = 1+(m_t-1)\cdot ICC$, respectively. Therefore, our study is equivalent to a randomized trial with independent participants of size $n_c=m_c\cdot k_c/DE_c$ and $n_t=m_t\cdot k_t/DE_t$ in the control and treatment groups, respectively. 
+
+The variance-covariance matrix of $\hat{pr}_c=(\hat{pr}_{c,1},\dots, \hat{pr}_{c,p})$ is a $p\times p$ matrix $COV_c$ where 
+\begin{align}
+COV_c[i,j] &= - \frac{pr_{c,i} \cdot pr_{c,j}}{n_c} \text{ if } i \neq j \\ 
+COV_c[i,i] &=  \frac{pr_{c,i} \cdot (1-pr_{c,i})}{n_c} \text{ for } i = 1, \dots, p.
+\end{align}
+The variance-covariance matrix of $\hat{pr}_t=(\hat{pr}_{t,1},\dots, \hat{pr}_{t,p})$ is a $p\times p$ matrix $COV_t$ where 
+\begin{align}
+COV_t[i,j] &= - \frac{pr_{t,i} \cdot pr_{t,j}}{n_t} \text{ if } i \neq j\\ 
+COV_t[i,i] &=  \frac{pr_{t,i} \cdot (1-pr_{t,i})}{n_t} \text{ for } i = 1, \dots, p.
+\end{align}
+The variance-covariance matrix of the combined vector $\hat{pr} =(\hat{pr}_{c,1}, \dots, \hat{pr}_{c,p}, \hat{pr}_{t,1}, \dots, \hat{pr}_{t,p})$ is a $2p\times 2p$ matrix $COV$ which has $COV_c$ and $COV_t$ on the diagonal. The two off-diagonal $p\times p$ quadrants are all zero because participants in the control group and those in the treatment group are independent.
+
+The expectation of the DOOR probability is
+\begin{equation}
+DOOR_{pr} = \sum_{i=1}^p \sum_{j=1}^p (pr_{c,i}\cdot pr_{t,j}\cdot I(i>j))+0.5 \cdot \sum_{i=1}^p pr_{c,i} \cdot pr_{t,i}.
+\end{equation}
+Taking the derivative of $DOOR_{pr}$ over the vector $pr=(pr_{c,1}, \dots, pr_{c,p}, pr_{t,1},\dots, pr_{t,p})$, we get a $2p\times 1$ vector $\delta$ which is the concatenation of $\delta_c (p\times 1)$ and $\delta_t (p\times 1)$. For $i=1,\dots,p$ and $j=1,\dots,p$,
+\begin{align}
+\delta_c[i] & = \sum_{j=1}^p (pr_{t,j}\cdot I(i>j))+0.5\cdot pr_{t,i}\\
+\delta_t[j] & = \sum_{i=1}^p (pr_{c,i}\cdot I(i>j))+0.5\cdot pr_{c,j}.
+\end{align}
+Applying Delta method, the variance of 
+\begin{equation}
+\hat{DOOR}_{pr}=
+\sum_{i=1}^p \sum_{j=1}^p (\hat{pr}_{c,i}\cdot \hat{pr}_{t,j}\cdot I(i>j)) + 0.5\cdot \sum_{i=1}^p \hat{pr}_{c,i}* \hat{pr}_{t,i}
+\end{equation}
+goes as follows - $var = \delta^{t}\cdot COV\cdot \delta$
+And the test statistic is 
+$test=(\hat{DOOR}_{pr}-0.5)/\sqrt(var)$, 
+which is going to be compared to a standard normal distribution. 
+The power for a one-sided test is 
+$power = Pr( z > 0.5/\sqrt(var)+1.68-DOOR_{pr}/\sqrt(var))$.
+
 
 
 
