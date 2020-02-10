@@ -18,9 +18,8 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_wider pivot_longer
-#' @importFrom dplyr group_by summarise arrange enquo
+#' @importFrom dplyr group_by summarise arrange enquo mutate ungroup
 #' @import ggplot2
-#' @importFrom scales percent_format
 #'
 #' @export
 plot_door_comparison <- function(res){
@@ -28,12 +27,12 @@ plot_door_comparison <- function(res){
   DOOR <- names(res)[1]
 
   res %>% pivot_longer(!!enquo(tx)) %>%
-    group_by(name) %>%
-    mutate(perc = value/ sum(value)) %>%
+    group_by(.data$name) %>%
+    mutate(perc = .data$value/ sum(.data$value)) %>%
     ungroup() %>%
-    ggplot(aes(name, perc, fill = factor(DOOR))) +
+    ggplot(aes(.data$name, .data$perc, fill = factor(DOOR))) +
     geom_bar(position="fill", stat="identity") +
-    geom_text(aes(label=ifelse(perc >= 0.07, paste0(sprintf("%.0f", perc*100),"%"),"")),
+    geom_text(aes(label=ifelse(.data$perc >= 0.07, paste0(sprintf("%.0f", .data$perc*100),"%"),"")),
               position=position_stack(vjust=0.5), colour="white") +
     theme_minimal() +
     coord_flip() +

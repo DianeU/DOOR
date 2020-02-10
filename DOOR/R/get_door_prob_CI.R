@@ -22,6 +22,8 @@
 #' get_door_probability(res)
 #' #get_door_prob_CI(res, tx = c("A", "B"))
 #'
+#'@importFrom stats quantile
+#'
 #' @export
 get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 100){
   if (method == "bootstrap"){
@@ -29,11 +31,11 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
               {
                 x <- res$DOOR
                 N <- apply(res[-1], 2, sum)
-                p <- apply(res[-1], 2, function(n) n/ N)
+                p <- apply(res[2] + res[3], 2, function(n) n/ N)/2
                 data <- data.frame(
                   seq = rep(tx, times = N),
-                  DOOR = as.vector(sapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p[,txi])))
-                  )
+                  DOOR = as.vector(sapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p)))
+                )
                 res <- get_door_summary(data, "seq", "DOOR")
                 get_door_probability(res)
               })

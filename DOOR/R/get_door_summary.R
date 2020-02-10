@@ -20,7 +20,7 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_wider
-#' @importFrom dplyr group_by summarise arrange enquo
+#' @importFrom dplyr group_by summarise arrange enquo n
 #'
 #' @export
 get_door_summary <- function(data, tx, outcome){

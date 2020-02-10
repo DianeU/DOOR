@@ -26,7 +26,6 @@ data <- data.frame(seq, DOOR)
 res <- get_door_summary(data, "seq", "DOOR")
 get_door_probability(res)
 
-
 }
 \references{
 Evans, S. R., Rubin, D., Follmann, et. al. (2015). Desirability of outcome ranking (DOOR) and response adjusted for duration of antibiotic risk (RADAR). Clinical Infectious Diseases, 61(5), 800-806.

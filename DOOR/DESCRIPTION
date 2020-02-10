@@ -4,24 +4,23 @@ Title: Desirability of Outcome Rating (DOOR)
 Version: 0.1.0
 Author: Scott Evans, Michelle Earley, Weixiao Dai, Toshi Hamasaki, Qing Pan,  Diane Uschner 
 Maintainer: Diane Uschner <duschner@bsc.gwu.edu>
-Description: Provides functions to calculate the DOOR probability, confidence intervals, and figures
-License: Creative Commons 3.0.
+Description: Provides functions to calculate the DOOR probability, confidence intervals, and figures. The DOOR probability is the probability that a random participant from the reference group has a higher DOOR outcome than a random participant in the comparison group. There is a shiny app available as a graphical user interface.
+License:  GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Depends:
     dplyr,
     magrittr,
     tidyr,
-    tidyselect,
-    ggplot2,
-    rlang,
-    scales
+    ggplot2
 Suggests: 
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+	tidyselect,
+	scales,
+    rlang
 RoxygenNote: 7.0.2
 Collate: 
     'get_door_prob_CI.R'
-    'get_door_prob_CI_H0.R'
     'get_door_summary.R'
     'get_door_probability.R'
     'plot_DOOR_comparison.R'
