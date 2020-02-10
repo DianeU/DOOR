@@ -4,7 +4,7 @@ get_door_prob_CI_H0 <- function(res, tx, alpha = 0.05, method = "bootstrap", B =
                    {
                      x <- res$DOOR
                      N <- apply(res[-1], 2, sum)
-                     p <- apply(res[2] + res[3], 2, function(n) n/ N)
+                     p <- apply(res[2] + res[3], 2, function(n) n/ N)/2
                      data <- data.frame(
                        seq = rep(tx, times = N),
                        #DOOR = as.vector(sapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p[,txi])))
