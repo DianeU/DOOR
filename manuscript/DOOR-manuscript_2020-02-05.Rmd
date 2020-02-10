@@ -13,6 +13,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(DOOR)
 ```
 
 # Introduction
@@ -140,8 +141,6 @@ This allows for different variances in both groups.
 We created an \proglang{R} package for the DOOR probability. The following code generates Table \ref{tab:door-summary} for an example of $n = 300$ participants and a DOOR outcome with $K = 4$ levels.
 
 ```{r message = FALSE}
-library(DOOR)
-
 set.seed(123)
 n <- 300
 seq <- rep(c("A", "B"), each = n/2)
@@ -153,7 +152,7 @@ data <- data.frame(seq, DOOR)
 The following command creates Figure \ref{fig:door-comparison} that visualizes Table \ref{tab:door-summary}.
 
 ```{r, fig.cap="\\label{fig:door-comparison}Visualization of the DOOR summary"}
-get_door_comparison(res)
+plot_door_comparison(res)
 ```
 
 

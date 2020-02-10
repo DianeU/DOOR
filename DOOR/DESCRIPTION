@@ -21,6 +21,7 @@ Suggests:
 RoxygenNote: 7.0.2
 Collate: 
     'get_door_prob_CI.R'
+    'get_door_prob_CI_H0.R'
     'get_door_summary.R'
     'get_door_probability.R'
     'plot_DOOR_comparison.R'
