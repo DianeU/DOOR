@@ -191,7 +191,8 @@ Taking the derivative of $DOOR_{pr}$ over the vector $pr=(pr_{c,1}, \dots, pr_{c
 Applying Delta method, the variance of 
 \begin{equation}
 \hat{DOOR}_{pr}=
-\sum_{i=1}^p \sum_{j=1}^p (\hat{pr}_{c,i}\cdot \hat{pr}_{t,j}\cdot I(i>j)) + 0.5\cdot \sum_{i=1}^p \hat{pr}_{c,i}* \hat{pr}_{t,i}
+\sum_{i=1}^p \sum_{j=1}^p (\hat{pr}_{c,i}\cdot \hat{pr}_{t,j}\cdot I(i>j)) + 
+  0.5\cdot \sum_{i=1}^p \hat{pr}_{c,i}\cdot \hat{pr}_{t,i}
 \end{equation}
 goes as follows - $var = \delta^{t}\cdot COV\cdot \delta$
 And the test statistic is 

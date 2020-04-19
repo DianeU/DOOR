@@ -39,6 +39,43 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
                 res <- get_door_summary(data, "seq", "DOOR")
                 get_door_probability(res)
               })
-  }
   quantile(p, probs = c(alpha/2, 1-alpha/2))
+  } else if (method == "multinom"){
+    DOOR_pr <- get_door_probability(res)
+
+    # CONSTRUCT COVARIANCE MATRIX
+    K <- nrow(res) #Number of door levels
+    N <- apply(res[-1], 2, sum)
+    pr <- apply(res[-1], 2, function(x) x/N)
+
+    V <- apply(pr, 2, function(x){
+      tmp <- -(x %*% t(x))/(sum(x)^2)
+      diag(tmp) <- (x * (1-x))/(sum(x)^2)
+      tmp
+    })
+
+    V <- t(t(V)/N)
+
+    V_p <- matrix(0, nrow = 2*K, ncol = 2*K)
+    V_p[1:K, 1:K] <- V[,1]
+    V_p[(K+1):(2*K), (K+1):(2*K)] <- V[,2]
+
+    # # CONSTRUCT THE DELTA
+    nA <- pull(res, tx[1])
+    nB <- pull(res, tx[2])
+
+    MA <- sapply(1:K, function(k) lead(nA, n = k, default = 0))
+    MB <- sapply(1:K, function(k) lead(nB, n = k, default = 0))
+    J <- rep(1, K)
+
+    Delta_A <- (MB %*% J + 0.5 * nB)/ sum(nB)
+    Delta_B <- (MA %*% J + 0.5 * nA)/ sum(nA)
+    Delta <- c(Delta_A, Delta_B)
+
+    se <- sqrt(Delta %*% V_p %*% Delta)
+
+    c(DOOR_pr + qnorm(alpha/2)*se, DOOR_pr - qnorm(alpha/2)*se)
+  } else {
+    print("Method not recognized")
+  }
 }
