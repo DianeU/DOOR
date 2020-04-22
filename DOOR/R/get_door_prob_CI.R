@@ -28,25 +28,25 @@
 get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 100){
   if (method == "bootstrap"){
     p <- replicate(B,
-              {
-                x <- res$DOOR
-                N <- apply(res[-1], 2, sum)
-                p <- apply(res[2] + res[3], 2, function(n) n/ N)/2
-                data <- data.frame(
-                  seq = rep(tx, times = N),
-                  DOOR = as.vector(sapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p)))
-                )
-                res <- get_door_summary(data, "seq", "DOOR")
-                get_door_probability(res)
-              })
-  quantile(p, probs = c(alpha/2, 1-alpha/2))
+                   {
+                     x <- res$DOOR
+                     N <- apply(res[-1], 2, sum)
+                     p <- apply(res[-1], 2, function(n) n/sum(N))
+                     data <- data.frame(
+                       seq = rep(tx, times = N),
+                       DOOR = as.vector(sapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p[,txi])))
+                     )
+                     res <- get_door_summary(data, "seq", "DOOR")
+                     get_door_probability(res)
+                   })
+  quantile(p, probs = c(alpha/2, 1-alpha/2), names = FALSE)
   } else if (method == "multinom"){
     DOOR_pr <- get_door_probability(res)
 
     # CONSTRUCT COVARIANCE MATRIX
     K <- nrow(res) #Number of door levels
     N <- apply(res[-1], 2, sum)
-    pr <- apply(res[-1], 2, function(x) x/N)
+    pr <- apply(res[-1], 2, function(x) x/sum(N))
 
     V <- apply(pr, 2, function(x){
       tmp <- -(x %*% t(x))/(sum(x)^2)
@@ -74,7 +74,7 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
 
     se <- sqrt(Delta %*% V_p %*% Delta)
 
-    c(DOOR_pr + qnorm(alpha/2)*se, DOOR_pr - qnorm(alpha/2)*se)
+    c(max(DOOR_pr + qnorm(alpha/2)*se, 0), min(DOOR_pr - qnorm(alpha/2)*se, 1)) # Interval should lie in [0,1]
   } else {
     print("Method not recognized")
   }
