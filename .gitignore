@@ -2,6 +2,7 @@ DOOR.Rcheck/
 .Rhistory
 DOOR/.Rproj.user/
 *.tar.gz
+*.7z
 *.pdf
 .RData
 .Ruserdata
