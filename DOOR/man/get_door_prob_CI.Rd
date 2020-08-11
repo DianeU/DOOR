@@ -13,7 +13,7 @@ get_door_prob_CI(res, tx, alpha = 0.05, method = "bootstrap", B = 100)
 
 \item{alpha}{numeric in (0,1) significance level, so that 1-alpha is the coverage probability.}
 
-\item{method}{character, to indicate whether bootstrap ("bootstrap") or asymptotic formulae ("exact") should be used.}
+\item{method}{character, to indicate whether bootstrap ("bootstrap"), asymptotic formulae ("multinom"), or the method proposed by Halperin et al (1989) ("halperin") should be used.}
 
 \item{B}{number of bootstrap samples}
 }
@@ -30,10 +30,10 @@ seq <- rep(c("A", "B"), each = N/2)
 DOOR <- sample(1:4, size = N, replace = TRUE)
 data <- data.frame(seq, DOOR)
 res <- get_door_summary(data, "seq", "DOOR")
-get_door_probability(res)
-#get_door_prob_CI(res, tx = c("A", "B"))
+get_door_prob_CI(res, tx = c("A", "B"), method = "halperin")
 
 }
 \references{
 Evans, S. R., Rubin, D., Follmann, et. al. (2015). Desirability of outcome ranking (DOOR) and response adjusted for duration of antibiotic risk (RADAR). Clinical Infectious Diseases, 61(5), 800-806.
+Halperin et al (1989)
 }

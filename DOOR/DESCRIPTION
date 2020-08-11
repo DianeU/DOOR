@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Scott Evans, Michelle Earley, Weixiao Dai, Toshi Hamasaki, Qing Pan,  Diane Uschner 
 Maintainer: Diane Uschner <duschner@bsc.gwu.edu>
 Description: Provides functions to calculate the DOOR probability, confidence intervals, and figures. The DOOR probability is the probability that a random participant from the reference group has a higher DOOR outcome than a random participant in the comparison group. There is a shiny app available as a graphical user interface.
-License:  GPL (>= 3)
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Depends:
@@ -18,7 +18,7 @@ Suggests:
 	tidyselect,
 	scales,
     rlang
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Collate: 
     'get_door_prob_CI.R'
     'get_door_summary.R'
