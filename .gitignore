@@ -1,7 +1,6 @@
 DOOR.Rcheck/
 .Rhistory
 DOOR/.Rproj.user/
-*.Rds
 *.tar.gz
 *.7z
 *.pdf
