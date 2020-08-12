@@ -1,6 +1,7 @@
 DOOR.Rcheck/
 .Rhistory
 DOOR/.Rproj.user/
+./simulations/03_results/*
 *.tar.gz
 *.7z
 *.pdf
