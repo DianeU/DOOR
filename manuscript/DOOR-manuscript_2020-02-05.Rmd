@@ -183,11 +183,14 @@ The expectation of the DOOR probability is
 \begin{equation}
 DOOR_{pr} = \sum_{i=1}^p \sum_{j=1}^p (pr_{c,i}\cdot pr_{t,j}\cdot I(i>j))+0.5 \cdot \sum_{i=1}^p pr_{c,i} \cdot pr_{t,i}.
 \end{equation}
-Taking the derivative of $DOOR_{pr}$ over the vector $pr=(pr_{c,1}, \dots, pr_{c,p}, pr_{t,1},\dots, pr_{t,p})$, we get a $2p\times 1$ vector $\delta$ which is the concatenation of $\delta_c (p\times 1)$ and $\delta_t (p\times 1)$. For $i=1,\dots,p$ and $j=1,\dots,p$,
+Taking the derivative of $DOOR_{pr}$ over the vector $pr=(pr_{c,1}, \dots, pr_{c,p}, pr_{t,1},\dots, pr_{t,p})$, 
+we get a $2p\times 1$ vector $\delta$ which is the concatenation of 
+$\delta_c (p\times 1)$ and $\delta_t (p\times 1)$. For $i=1,\dots,p$ and $j=1,\dots,p$,
 \begin{align}
 \delta_c[i] & = \sum_{j=1}^p (pr_{t,j}\cdot I(i>j))+0.5\cdot pr_{t,i}\\
 \delta_t[j] & = \sum_{i=1}^p (pr_{c,i}\cdot I(i>j))+0.5\cdot pr_{c,j}.
 \end{align}
+
 Applying Delta method, the variance of 
 \begin{equation}
 \hat{DOOR}_{pr}=

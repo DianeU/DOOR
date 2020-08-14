@@ -48,12 +48,12 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
     N <- apply(res[-1], 2, sum)
     pr <- apply(res[-1], 2, function(x) x/sum(N))
 
+    # Create variance matrix
     V <- apply(pr, 2, function(x){
       tmp <- -(x %*% t(x))/(sum(x)^2)
       diag(tmp) <- (x * (1-x))/(sum(x)^2)
       tmp
     })
-
     V <- t(t(V)/N)
 
     V_p <- matrix(0, nrow = 2*K, ncol = 2*K)
@@ -64,7 +64,7 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
     nA <- pull(res, tx[1])
     nB <- pull(res, tx[2])
 
-    MA <- sapply(1:K, function(k) lead(nA, n = k, default = 0))
+    MA <- sapply(1:K, function(k) lead(nA, n = k, default = 0)) # Diagonal matrix with the frequencies
     MB <- sapply(1:K, function(k) lead(nB, n = k, default = 0))
     J <- rep(1, K)
 
@@ -81,17 +81,17 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
 
     K = nrow(res)
     P <- res %>% dplyr::mutate_at(tx, function(x) x/sum(x))
-    p1<- pull(P, tx[1])
-    p2 <- pull(P, tx[2])
+    p1 <- pull(P, tx[1]) # Group A
+    p2 <- pull(P, tx[2]) # Group B
 
     q1 <- 1 - p1
     q2 <- 1 - p2
 
-    m <- sum(res[,tx[1]])
-    n <- sum(res[,tx[2]])
+    m <- sum(res[,tx[1]]) # Group A
+    n <- sum(res[,tx[2]]) # Group B
 
-    P2 <- apply(sapply(1:K, function(k) lead(p2, n = k, default = 0)), 2, sum)
     P1 <- apply(sapply(1:K, function(k) dplyr::lag(p1, n = K-k+1, default = 0)), 2, sum)
+    P2 <- apply(sapply(1:K, function(k) lead(p2, n = k, default = 0)), 2, sum)
 
     A <- sum((p1*(P2 + (p2/2))^2)[-K]) + 0.25 * p1[K]*(p2[K])^2
     B <- sum((p2*(P1 + (p1/2))^2)[-1]) + 0.25 * p2[1]*(p1[1])^2
@@ -122,6 +122,58 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
     C <- gamma * qchisq(1-0.05, 1)/(m*n)
 
     b <- sqrt(C^2 + 4 * C * xi*(1-xi))
+    UL <- (C + 2 * xi + b)/(2 * (C+1))
+    LL <- (C + 2 * xi - b)/(2 * (C+1))
+
+    c(LL, UL)
+  }  else if (method == "halperin2"){
+    xi <- get_door_probability(res, tx = tx)
+
+    K = nrow(res)
+    P <- res %>% dplyr::mutate_at(tx, function(x) x/sum(x))
+    p1 <- pull(P, tx[1]) # Group A
+    p2 <- pull(P, tx[2]) # Group B
+
+    q1 <- 1 - p1
+    q2 <- 1 - p2
+
+    m <- sum(res[,tx[1]]) # Group A
+    n <- sum(res[,tx[2]]) # Group B
+
+    # Cumulative sum of Probabilities
+    P1 <- apply(sapply(1:K, function(k) dplyr::lag(p1, n = K-k+1, default = 0)), 2, sum)
+    P2 <- apply(sapply(1:K, function(k) lead(p2, n = k, default = 0)), 2, sum)
+
+    # Coefficients in the variance estimation
+    A <- sum((p1*(P2 + (p2/2))^2)[-K]) + 0.25 * p1[K]*(p2[K])^2
+    B <- sum((p2*(P1 + (p1/2))^2)[-1]) + 0.25 * p2[1]*(p1[1])^2
+
+    # Maximum Likelihood estimator
+    V1 <- 1/(m*n)*(xi - (m + n -1) * xi^2 + (n-1) * A + (m-1)*B - 0.25* sum(p1*p2))
+
+    # Unbiased estimators
+
+    ## A hat hat
+    s1 <- sum(p1*(q2*P2 - P2^2))
+    corrA <- 1/(n-1) * s1 -  1/(4* (n-1)) * sum(p1*p2*q2)
+    Ahh <- A - corrA
+
+    ## B hat hat
+    s2 <- sum(p2 * (q1 * P1 - P1^2))
+    corrB <- 1/(m-1) * s2 -  1/(4* (m-1)) * sum(p2*p1*q1)
+    Bhh <- B - corrB
+
+    ## Unbiased estimator of xi* (1 - xi)
+    xi2 <- ((m*n - m - n +2) * xi - m *n * xi^2)/((m-1)*(n-1)) + Ahh/(m-1) + Bhh/(n-1)
+
+    theta <- ((m+n-2) * xi - (n-1)*Ahh - (m-1) * Bhh)/((m + n - 2)* xi2)
+    theta <- max(min(theta, 1), 0)
+
+    gamma <- (m + n - 1) - (m + n - 2) * theta
+
+    C <- gamma * qchisq(1-alpha, 1)/(m*n)
+
+    b <- sqrt(C^2 + 4 * C * xi2) # just changed xi2 here
     UL <- (C + 2 * xi + b)/(2 * (C+1))
     LL <- (C + 2 * xi - b)/(2 * (C+1))
 

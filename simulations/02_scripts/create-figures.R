@@ -1,6 +1,6 @@
 library(tidyverse)
 library(ggsci)
-D <- read_rds("../simulations/03_results/2020-08-12_confidence-intervals.Rds")
+D <- read_rds("../simulations/03_results/2020-08-14_confidence-intervals.Rds")
 D <- as_tibble(lapply(D, unlist))
 
 D <- D %>%

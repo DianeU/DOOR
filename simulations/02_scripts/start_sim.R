@@ -15,9 +15,6 @@ tx <- c("A", "B")
 K <- 3
 
 #Increasing “Treatment effect”, i.e. increasing true DOOR probability p= P (Y_A≥Y_B).
-pA <- c(0.2, 0.2, 0.6)
-pB <- c(0.2, 0.6, 0.2)
-
 trueP <- c(0.5, 0.66, 0.74)
 
 #Sample size N = 100,200,500.
@@ -25,7 +22,7 @@ N <- c(100,200,500)
 
 # Confidence-Interval Method "\"bootstrap\",\"multinom\" }"
 # For "method == bootstrap" , number of bootstrap samples B= 1500
- method <- c("bootstrap", "multinom", "halperin")
+ method <- c("bootstrap", "multinom", "halperin", "halperin2")
 #method <- c("multinom", "halperin")
 B <- 500
 
@@ -46,7 +43,7 @@ getData <- function(x){
     pB <- c(0.2, 0.6, 0.2)
   } else if (x$trueP == 0.74) {
     pA <- c(0.2, 0.2, 0.6)
-    pB <- c(0.2, 0.6, 0.2)
+    pB <- c(0.6, 0.6, 0.2)
   }
 
   myData <- myData %>%
