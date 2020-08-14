@@ -29,19 +29,19 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
   if (method == "bootstrap"){
     p <- replicate(B,
                    {
-                     x <- res$DOOR
+                     x <- pull(res, 1)
                      N <- apply(res[-1], 2, sum)
                      p <- apply(res[-1], 2, function(n) n/sum(N))
                      data <- data.frame(
                        seq = rep(tx, times = N),
-                       DOOR = as.vector(sapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p[,txi])))
+                       DOOR = unlist(lapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p[,txi])))
                      )
                      res <- get_door_summary(data, "seq", "DOOR")
-                     get_door_probability(res)
+                     get_door_probability(res, tx = tx)
                    })
   quantile(p, probs = c(alpha/2, 1-alpha/2), names = FALSE)
   } else if (method == "multinom"){
-    DOOR_pr <- get_door_probability(res)
+    DOOR_pr <- get_door_probability(res, tx = tx)
 
     # CONSTRUCT COVARIANCE MATRIX
     K <- nrow(res) #Number of door levels
@@ -77,7 +77,7 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
     c(max(DOOR_pr + qnorm(alpha/2)*se, 0), min(DOOR_pr - qnorm(alpha/2)*se, 1)) # Interval should lie in [0,1]
 
   } else if (method == "halperin"){
-    xi <- get_door_probability(res)
+    xi <- get_door_probability(res, tx = tx)
 
     K = nrow(res)
     P <- res %>% dplyr::mutate_at(tx, function(x) x/sum(x))

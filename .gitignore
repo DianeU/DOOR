@@ -1,6 +1,7 @@
 DOOR.Rcheck/
 .Rhistory
 DOOR/.Rproj.user/
+DOOR/dev/DOOR_tst.csv
 *.tar.gz
 *.7z
 *.pdf

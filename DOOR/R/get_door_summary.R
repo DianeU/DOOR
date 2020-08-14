@@ -30,8 +30,9 @@ get_door_summary <- function(data, tx, outcome){
   group_vars <- c(tx, outcome)
 
   data %>%
+    dplyr::filter(!is.na(!!sym(outcome))) %>%
     group_by(.dots = group_vars) %>%
-    summarise(count = n()) %>%
+    summarise(count = n(), .groups = "drop") %>%
     pivot_wider(names_from = tx, values_from = "count", values_fill = list(count = 0L)) %>%
     arrange(!!sym(outcome))
 }
