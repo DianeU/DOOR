@@ -2,7 +2,11 @@
 title: "DOOR Examples"
 author: "Diane Uschner"
 date: "8/15/2020"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DOOR Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
