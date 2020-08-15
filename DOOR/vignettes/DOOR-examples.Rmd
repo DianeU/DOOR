@@ -1,0 +1,80 @@
+---
+title: "DOOR Examples"
+author: "Diane Uschner"
+date: "8/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Loading the package
+
+```{r message = FALSE}
+library(DOOR)
+```
+
+
+## Example 1
+
+The first example data set has 26 observations. This data is from the \texttt{sample-data.csv} data set that is also included in the \texttt{./dev/} folder or on the BSC confluence page. The first few observations look like this. 
+
+```{r}
+head(sample_data)
+```
+
+First we obtain the DOOR summary for this data set:
+
+```{r}
+res <- get_door_summary(data = sample_data, tx = "seq", outcome = "DOOR" )
+res
+```
+
+We use the summary to estimate the DOOR probability:
+
+```{r}
+xi <- get_door_probability(res, tx = c("A", "B")) # Probability that group A is better than group B
+```
+
+Next we compute the DOOR confidence intervals for this example using the Bootstrap, Halperin and Multinomial methods.
+
+```{r}
+get_door_prob_CI(res, tx = c("A", "B"), method = "bootstrap")
+get_door_prob_CI(res, tx = c("A", "B"), method = "halperin")
+get_door_prob_CI(res, tx = c("A", "B"), method = "multinom")
+```
+
+
+## Example 2
+
+We now repeat the same steps for a larger dataset. This second example data set has 300 observations. This data is from the \texttt{sample_data_N_300.csv} data set that is also included in the \texttt{./dev/} folder or on the BSC confluence page. The first few observations look like this. 
+
+```{r}
+head(sample_data_N300)
+```
+
+First we obtain the DOOR summary for this data set:
+
+```{r}
+res <- get_door_summary(data = sample_data_N300, tx = "seq", outcome = "DOOR" )
+res
+```
+
+We use the summary to estimate the DOOR probability:
+
+```{r}
+xi <- get_door_probability(res, tx = c("A", "B")) # Probability that group A is better than group B
+```
+
+Next we compute the DOOR confidence intervals for this example using the Bootstrap, Halperin and Multinomial methods.
+
+```{r}
+get_door_prob_CI(res, tx = c("A", "B"), method = "bootstrap")
+get_door_prob_CI(res, tx = c("A", "B"), method = "halperin")
+get_door_prob_CI(res, tx = c("A", "B"), method = "multinom")
+```
+
+
+
