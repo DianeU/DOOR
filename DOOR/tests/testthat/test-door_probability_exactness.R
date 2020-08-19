@@ -13,7 +13,7 @@ testthat::test_that("CI contains the DOOR probability", {
   data <- data.frame(seq, DOOR)
   res <- get_door_summary(data, "seq", "DOOR")
   p <- get_door_probability(res)
-  ci <- get_door_prob_CI(res, tx = c("A", "B"))
+  ci <- get_door_prob_CI(res, tx = c("A", "B"))$ci
   testthat::expect_true(ci[1] <= p)
   testthat::expect_true(ci[2] >= p)
 })

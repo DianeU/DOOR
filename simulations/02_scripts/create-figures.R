@@ -15,6 +15,8 @@ results <- D %>%
   summarize(
     bias_exp = mean(bias),
     bias_sd = sd(bias),
+    xi_est = mean(xi),
+    xi_sd = sd(xi),
     width_exp = mean(width),
     width_sd = sd(width),
     cov_prob = sum(inside)/n()*100,

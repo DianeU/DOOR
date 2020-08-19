@@ -27,11 +27,11 @@
 #' @export
 get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 100){
   if (method == "bootstrap"){
+    N <- apply(res[-1], 2, sum)
+    x <- pull(res, 1)
+    p <- apply(res[-1], 2, function(n) n/sum(N))
     p <- replicate(B,
                    {
-                     x <- pull(res, 1)
-                     N <- apply(res[-1], 2, sum)
-                     p <- apply(res[-1], 2, function(n) n/sum(N))
                      data <- data.frame(
                        seq = rep(tx, times = N),
                        DOOR = unlist(lapply(tx, function(txi) sample(x, size = N[txi], replace = TRUE, prob = p[,txi])))
@@ -39,7 +39,8 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
                      res <- get_door_summary(data, "seq", "DOOR")
                      get_door_probability(res, tx = tx)
                    })
-  quantile(p, probs = c(alpha/2, 1-alpha/2), names = FALSE)
+  list(ci = quantile(p, probs = c(alpha/2, 1-alpha/2), names = FALSE),
+       se = sqrt(var(p)/sum(N)))
   } else if (method == "multinom"){
     DOOR_pr <- get_door_probability(res, tx = tx)
 
@@ -74,7 +75,9 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
 
     se <- sqrt(Delta %*% V_p %*% Delta)
 
-    c(max(DOOR_pr + qnorm(alpha/2)*se, 0), min(DOOR_pr - qnorm(alpha/2)*se, 1)) # Interval should lie in [0,1]
+
+    list(ci = c(max(DOOR_pr + qnorm(alpha/2)*se, 0), min(DOOR_pr - qnorm(alpha/2)*se, 1)), # Interval should lie in [0,1]
+         se = se)
 
   } else if (method == "halperin"){
     xi <- get_door_probability(res, tx = tx)
@@ -102,8 +105,8 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
     # Unbiased estimators
 
     ## A hat hat
-    s2 <- sum(p1*(q2*P2 - P2^2))
-    corrA <- 1/(n-1) * s2 -  1/(4* (n-1)) * sum(p1*p2*q2)
+    s1 <- sum(p1*(q2*P2 - P2^2))
+    corrA <- 1/(n-1) * s1 -  1/(4* (n-1)) * sum(p1*p2*q2)
     Ahh <- A - corrA
 
     ## B hat hat
@@ -119,13 +122,17 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
 
     gamma <- (m + n - 1) - (m + n - 2) * theta
 
-    C <- gamma * qchisq(1-0.05, 1)/(m*n)
+    V_tilde = gamma*xi2/(m*n)
+
+    C <- gamma * qchisq(1-alpha, 1)/(m*n)
 
     b <- sqrt(C^2 + 4 * C * xi*(1-xi))
     UL <- (C + 2 * xi + b)/(2 * (C+1))
     LL <- (C + 2 * xi - b)/(2 * (C+1))
 
-    c(LL, UL)
+
+    list(ci = c(LL, UL), # Interval should lie in [0,1]
+         se = V_tilde)
   }  else if (method == "halperin2"){
     xi <- get_door_probability(res, tx = tx)
 
@@ -171,13 +178,16 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
 
     gamma <- (m + n - 1) - (m + n - 2) * theta
 
+    V_tilde = gamma*xi2/(m*n)
+
     C <- gamma * qchisq(1-alpha, 1)/(m*n)
 
     b <- sqrt(C^2 + 4 * C * xi2) # just changed xi2 here
     UL <- (C + 2 * xi + b)/(2 * (C+1))
     LL <- (C + 2 * xi - b)/(2 * (C+1))
 
-    c(LL, UL)
+    list(ci = c(LL, UL), # Interval should lie in [0,1]
+         se = V_tilde)
   } else {
     print("Method not recognized")
   }
