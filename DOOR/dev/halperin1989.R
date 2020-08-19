@@ -40,6 +40,27 @@ P1 <- apply(sapply(1:K, function(k) dplyr::lag(p1, n = K-k+1, default = 0)), 2, 
 A <- sum((p1*(P2 + (p2/2))^2)[-K]) + 0.25 * p1[K]*(p2[K])^2
 B <- sum((p2*(P1 + (p1/2))^2)[-1]) + 0.25 * p2[1]*(p1[1])^2
 
+# A <- 0
+# for(i in 1:(K-1)){
+#   innerSum <- 0
+#   for (j in i:K) {
+#     innerSum <- innerSum + p2[j] + p2[i]/2
+#     print(innerSum)
+#   }
+#   A <- A + p1[i] * innerSum^2
+# }
+# A <- A + p1[K]*(p2[K])^2/4
+
+#
+# B <- 0
+# for(j in 2:K){
+#   innerSum <- 0
+#   for (i in 1:(j-1)) {
+#   innerSum <- innerSum +p1[i] + p1[j]/2
+#   }
+#   B <- B + p2[j] * innerSum^2
+# }
+# B <- B + (p1[1])^2*p2[1]/4
 
 # Variance - Maximum Likelihood estimator - Formula 3.2
 V1 <- 1/(m*n)*(xi - (m + n -1) * xi^2 + (n-1) * A + (m-1)*B - 0.25* sum(p1*p2))

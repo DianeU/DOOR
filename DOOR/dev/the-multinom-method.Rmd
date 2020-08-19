@@ -1,0 +1,88 @@
+---
+title: "The multinomial method"
+author: "Diane Uschner"
+date: "8/18/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(DOOR)
+```
+
+# Method
+
+We calculate the single steps of the Halperin algorithm for the first of the simulation settings of the Halperin et al. (1989) paper.
+
+## Settings
+
+```{r}
+K <- 3
+m <- n <- 100
+N <- c(m, n)
+DOOR_pr <- 0.5
+
+p1 <- c(1/3, 1/3, 1/3)
+p2 <- c(1/3, 1/3, 1/3)
+
+pr <- cbind(p1, p2)
+alpha <- 0.05
+```
+
+## Create variance matrix
+
+```{r}
+
+V <- apply(pr, 2, function(x){
+  tmp <- -(x %*% t(x))/(sum(x)^2)
+  diag(tmp) <- (x * (1-x))/(sum(x)^2)
+  tmp
+})
+V <- t(t(V)/N)
+
+V_p <- matrix(0, nrow = 2*K, ncol = 2*K)
+V_p[1:K, 1:K] <- V[,1]
+V_p[(K+1):(2*K), (K+1):(2*K)] <- V[,2]
+V_p
+```
+
+## Derivative of the DOOR estimator
+
+```{r}
+nA <- p1
+nB <- p2
+
+MA <- sapply(1:K, function(k) lead(nA, n = k, default = 0)) # Diagonal matrix with the frequencies
+MB <- sapply(1:K, function(k) lead(nB, n = k, default = 0))
+J <- rep(1, K)
+
+Delta_A <- (MB %*% J + 0.5 * nB)
+Delta_B <- (MA %*% J + 0.5 * nA)
+(Delta <- c(Delta_A, Delta_B))
+```
+```{r}
+t(Delta_A) %*% V_p[1:3, 1:3] %*% Delta_A
+
+```
+
+
+
+
+```{r}
+se <- sqrt(Delta %*% V_p %*% Delta/ sum(N))
+
+c(max(DOOR_pr + qnorm(alpha/2)*se, 0), min(DOOR_pr - qnorm(alpha/2)*se, 1)) # Interval should lie in [0,1]
+```
+
+
+## Using the CRACKLE data
+
+```{r}
+myData <- read.csv("DOOR_tst.csv")
+
+res <- get_door_summary(myData, tx = "trt", outcome = "doorcat4")
+get_door_probability(res, tx = c("Non-CP CRE", "CPE"))
+get_door_prob_CI(res, tx = c("Non-CP CRE", "CPE"), method = "multinom")
+```
+
