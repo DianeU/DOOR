@@ -26,9 +26,10 @@ results <- D %>%
     time_sd = sd(time)
   )
 
-tmp <- D %>% group_by(method, N, trueP)%>%
+tmp <- D %>% group_by(method, N, trueP) %>%
   summarize(
-    xi_SE = sd(xi)/sqrt(N),
+    xi_est = mean(xi),
+    xi_SE = sd(xi)/sqrt(n()),
     se_mean = mean(se), .groups = "drop"
   )
 
