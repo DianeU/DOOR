@@ -1,8 +1,7 @@
 library(tidyverse)
 library(ggsci)
 
-D <- read_rds("../simulations/03_results/2020-08-14_confidence-intervals.Rds")
-D <- read_rds("../simulations/03_results/2020-08-18_confidence-intervals.Rds")
+D <- read_rds("../simulations/03_results/2020-08-19_confidence-intervals.Rds")
 D <- as_tibble(lapply(D, unlist))
 
 D <- D %>%
@@ -32,7 +31,7 @@ tmp <- D %>% group_by(method, N, trueP) %>%
     xi_SE = sd(xi)/sqrt(n()),
     se_mean = mean(se), .groups = "drop"
   )
-
+write.csv(tmp, file = paste0("../simulations/03_results/", Sys.Date(), "_comparison_SE.csv"))
 
 
 # Estimation of the bias does not depend on the CI

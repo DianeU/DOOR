@@ -65,5 +65,6 @@ for (i in 1:nrow(par)) {
   D <- rbind(D, tmp)
 }
 T2<- Sys.time()
+T2-T1
 
 write_rds(D, path = paste0("../simulations/03_results/", Sys.Date(), "_confidence-intervals.Rds"))
