@@ -2,6 +2,7 @@ library(tidyverse)
 library(ggsci)
 
 D <- read_rds("../simulations/03_results/2020-08-14_confidence-intervals.Rds")
+D <- read_rds("../simulations/03_results/2020-08-18_confidence-intervals.Rds")
 D <- as_tibble(lapply(D, unlist))
 
 D <- D %>%
@@ -16,13 +17,21 @@ results <- D %>%
     bias_exp = mean(bias),
     bias_sd = sd(bias),
     xi_est = mean(xi),
-    xi_sd = sd(xi),
+    xi_SE = sd(xi)/sqrt(N),
+    se_mean = mean(se),
     width_exp = mean(width),
     width_sd = sd(width),
     cov_prob = sum(inside)/n()*100,
     time_exp = mean(time),
     time_sd = sd(time)
   )
+
+tmp <- D %>% group_by(method, N, trueP)%>%
+  summarize(
+    xi_SE = sd(xi)/sqrt(N),
+    se_mean = mean(se), .groups = "drop"
+  )
+
 
 
 # Estimation of the bias does not depend on the CI

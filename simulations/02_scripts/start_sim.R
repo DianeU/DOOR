@@ -22,14 +22,14 @@ N <- c(100,200,500)
 
 # Confidence-Interval Method "\"bootstrap\",\"multinom\" }"
 # For "method == bootstrap" , number of bootstrap samples B= 1500
- method <- c("bootstrap", "multinom", "halperin", "halperin2")
+ method <- c("bootstrap", "multinom", "halperin")
 #method <- c("multinom", "halperin")
 B <- 500
 
 par <- expand.grid(alpha = alpha, r=r, K = K, N = N, method = method, B = B, trueP = trueP, stringsAsFactors = FALSE)
 
 D <- data.frame(alpha = numeric(0), r = numeric(0), K = numeric(0), N = numeric(0), method = character(0), B = numeric(0), trueP = numeric(0),
-                xi = numeric(0), LL = numeric(0), UL = numeric(0), time = numeric(0))
+                xi = numeric(0), LL = numeric(0), UL = numeric(0), se = numeric(0), time = numeric(0))
 
 getData <- function(x){
   N <- x$N
@@ -52,10 +52,10 @@ getData <- function(x){
   res <- get_door_summary(myData, "seq", "DOOR")
   xi <- get_door_probability(res)
   t1 <- Sys.time()
-  ci <- get_door_prob_CI(res, tx = c("A", "B"), method = x$method)
+  out <- get_door_prob_CI(res, tx = c("A", "B"), method = x$method)
   t2 <- Sys.time()
   time <- t2 - t1
-  c(x, xi = xi, LL = ci[1], UL = ci[2], time = as.numeric(time))
+  c(x, xi = xi, LL = out$ci[1], UL = out$ci[2], se = out$se, time = as.numeric(time))
 }
 
 T1 <- Sys.time()

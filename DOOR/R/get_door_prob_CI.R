@@ -6,12 +6,14 @@
 #' @param method character, to indicate whether bootstrap ("bootstrap"), asymptotic formulae ("multinom"), or the method proposed by Halperin et al (1989) ("halperin") should be used.
 #' @param B number of bootstrap samples
 #'
-#' @return dataframe with the door summary
+#' @return list that contains two elements: the two element vector ci contains the lower and upper bound of the confidence interval. se contains the standard error of the DOOR probability estimator. For the
+#' bootstrap method that is the sample variance of the generated bootstrap samples. For multinomial method, the standard error is computed using the Delta method. For the Halperin method,
+#' se actually denotes V tilde of equation 3.6 from the paper.
 #'
 #' @description This function calculates the DOOR probability from the door summary.
 #'
 #' @references Evans, S. R., Rubin, D., Follmann, et. al. (2015). Desirability of outcome ranking (DOOR) and response adjusted for duration of antibiotic risk (RADAR). Clinical Infectious Diseases, 61(5), 800-806.
-#' Halperin et al (1989)
+#' Halperin, M, Hamdy MI, Thall PF (1989). Distribution-free confidence intervals for a parameter of Wilcoxon-Mann-Whitney type for ordered categories and progressive censoring.
 #'
 #' @examples
 #' set.seed(123)
