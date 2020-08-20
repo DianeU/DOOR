@@ -49,7 +49,8 @@ get_door_prob_CI <- function(res, tx, alpha = 0.05, method = "bootstrap", B = 10
     # CONSTRUCT COVARIANCE MATRIX
     K <- nrow(res) #Number of door levels
     N <- apply(res[-1], 2, sum)
-    pr <- apply(res[-1], 2, function(x) x/sum(N))
+    #pr <- apply(res[-1], 2, function(x) x/sum(N))
+    pr <- apply(res[-1], 2, function(x) x/sum(x))
 
     # Create variance matrix
     V <- apply(pr, 2, function(x){
